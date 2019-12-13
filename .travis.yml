@@ -4,7 +4,7 @@ services:
 
 env:
   global:
-    - AFTER_INIT='./setup_poco_ppa.sh'
+    - AFTER_INIT='./setup_poco_on_xenial.sh'
   matrix:
     - ROS_DISTRO="kinetic" ROS_REPO=ros CATKIN_LINT=true
     - ROS_DISTRO="dashing" ROS_REPO=ros

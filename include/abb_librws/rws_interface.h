@@ -312,11 +312,18 @@ public:
   StaticInfo collectStaticInfo();
 
   /**
+   * \brief Retrieves the configuration instances for the present (RobotWare) options.
+   *
+   * \return std::vector<cfg::sys::PresentOption> containing a list of the present (RobotWare) options.
+   */
+  std::vector<cfg::sys::PresentOption> getCFGPresentOptions();
+
+  /**
    * \brief A method for retrieving the RobotWare options present on the active robot controller system.
    *
-   * \return std::vector<OptionInfo> containing a list of the present RobotWare options.
+   * \return std::vector<RobotWareOptionInfo> containing a list of the present RobotWare options.
    */
-  std::vector<RobotWareOptionInfo> getPresentRobotWareOptions();
+  ABB_LIBRWS_DEPRECATED std::vector<RobotWareOptionInfo> getPresentRobotWareOptions();
 
   /**
    * \brief A method for retrieving the value if an IO signal.

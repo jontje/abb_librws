@@ -398,6 +398,11 @@ struct SystemConstants
     struct ABB_LIBRWS_EXPORT XMLAttributes
     {
       /**
+       * \brief Class & active type.
+       */
+      static const XMLAttribute CLASS_ACTIVE;
+
+      /**
        * \brief Class & cfg-ia-t-li.
        */
       static const XMLAttribute CLASS_CFG_IA_T_LI;
@@ -421,6 +426,11 @@ struct SystemConstants
        * \brief Class & data type.
        */
       static const XMLAttribute CLASS_DATTYP;
+
+      /**
+       * \brief Class & excstate type.
+       */
+      static const XMLAttribute CLASS_EXCSTATE;
 
       /**
        * \brief Class & ios-signal.
@@ -499,6 +509,11 @@ struct SystemConstants
     struct ABB_LIBRWS_EXPORT Identifiers
     {
       /**
+       * \brief Active type.
+       */
+      static const std::string ACTIVE;
+
+      /**
        * \brief XML attribute name: class.
        */
       static const std::string CLASS;
@@ -527,6 +542,11 @@ struct SystemConstants
        * \brief Data type.
        */
       static const std::string DATTYP;
+
+      /**
+       * \brief Execution state type.
+       */
+      static const std::string EXCSTATE;
 
       /**
        * \brief Home directory.

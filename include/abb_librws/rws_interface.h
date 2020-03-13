@@ -312,6 +312,13 @@ public:
   StaticInfo collectStaticInfo();
 
   /**
+   * \brief Retrieves the configuration instances for the arms defined in the system.
+   *
+   * \return std::vector<cfg::moc::Arm> containing a list of the arms defined in the system.
+   */
+  std::vector<cfg::moc::Arm> getCFGArms();
+
+  /**
    * \brief Retrieves the configuration instances for the present (RobotWare) options.
    *
    * \return std::vector<cfg::sys::PresentOption> containing a list of the present (RobotWare) options.

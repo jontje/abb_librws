@@ -325,6 +325,13 @@ public:
    */
   std::vector<cfg::sys::PresentOption> getCFGPresentOptions();
 
+  /*
+   * \brief Retrieves the configuration instances for the singles defined in the system.
+   *
+   * \return std::vector<cfg::moc::Single> containing a list of the singles defined in the system.
+   */
+  std::vector<cfg::moc::Single> getCFGSingles();
+
   /**
    * \brief A method for retrieving the RobotWare options present on the active robot controller system.
    *

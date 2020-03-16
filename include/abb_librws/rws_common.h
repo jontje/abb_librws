@@ -619,6 +619,11 @@ struct SystemConstants
       static const std::string RW_VERSION_NAME;
 
       /**
+       * \brief Single.
+       */
+      static const std::string SINGLE;
+
+      /**
        * \brief State.
        */
       static const std::string STATE;

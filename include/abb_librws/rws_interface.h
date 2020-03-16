@@ -325,6 +325,13 @@ public:
    */
   std::vector<cfg::sys::PresentOption> getCFGPresentOptions();
 
+  /**
+   * \brief Retrieves the configuration instances for the present robots.
+   *
+   * \return std::vector<cfg::moc::Robot> containing a list of the present robots.
+   */
+  std::vector<cfg::moc::Robot> getCFGRobots();
+
   /*
    * \brief Retrieves the configuration instances for the singles defined in the system.
    *

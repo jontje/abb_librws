@@ -319,6 +319,13 @@ public:
   std::vector<cfg::moc::Arm> getCFGArms();
 
   /**
+   * \brief Retrieves the configuration instances for the mechanical units defined in the system.
+   *
+   * \return std::vector<cfg::moc::MechanicalUnit> containing a list of the mechanical units defined in the system.
+   */
+  std::vector<cfg::moc::MechanicalUnit> getCFGMechanicalUnits();
+
+  /**
    * \brief Retrieves the configuration instances for the present (RobotWare) options.
    *
    * \return std::vector<cfg::sys::PresentOption> containing a list of the present (RobotWare) options.

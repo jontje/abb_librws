@@ -122,7 +122,6 @@ std::vector<cfg::moc::Arm> RWSInterface::getCFGArms()
   return result;
 }
 
-
 std::vector<cfg::moc::MechanicalUnit> RWSInterface::getCFGMechanicalUnits()
 {
   std::vector<cfg::moc::MechanicalUnit> result;
@@ -162,6 +161,50 @@ std::vector<cfg::moc::MechanicalUnit> RWSInterface::getCFGMechanicalUnits()
     }
 
     result.push_back(mechanical_unit);
+  }
+
+  return result;
+}
+
+std::vector<cfg::sys::MechanicalUnitGroup> RWSInterface::getCFGMechanicalUnitGroups()
+{
+  std::vector<cfg::sys::MechanicalUnitGroup> result;
+
+  RWSClient::RWSResult rws_result;
+  rws_result = rws_client_.getConfigurationInstances(Identifiers::SYS, Identifiers::MECHANICAL_UNIT_GROUP);
+
+  std::vector<Poco::XML::Node*> instances;
+  instances = xmlFindNodes(rws_result.p_xml_document, XMLAttributes::CLASS_CFG_DT_INSTANCE_LI);
+
+  for (size_t i = 0; i < instances.size(); ++i)
+  {
+    std::vector<Poco::XML::Node*> attributes = xmlFindNodes(instances[i], XMLAttributes::CLASS_CFG_IA_T_LI);
+
+    cfg::sys::MechanicalUnitGroup mechanical_unit_group;
+
+    for (size_t j = 0; j < attributes.size(); ++j)
+    {
+      Poco::XML::Node* attribute = attributes[j];
+      if(xmlNodeHasAttribute(attribute, Identifiers::TITLE, "Name"))
+      {
+        mechanical_unit_group.name = xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE);
+      }
+      else if(xmlNodeHasAttribute(attribute, Identifiers::TITLE, "Robot"))
+      {
+        mechanical_unit_group.robot = xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE);
+      }
+      else if(xmlNodeHasAttribute(attribute, Identifiers::TITLE, "MechanicalUnit_1") ||
+              xmlNodeHasAttribute(attribute, Identifiers::TITLE, "MechanicalUnit_2") ||
+              xmlNodeHasAttribute(attribute, Identifiers::TITLE, "MechanicalUnit_3") ||
+              xmlNodeHasAttribute(attribute, Identifiers::TITLE, "MechanicalUnit_4") ||
+              xmlNodeHasAttribute(attribute, Identifiers::TITLE, "MechanicalUnit_5") ||
+              xmlNodeHasAttribute(attribute, Identifiers::TITLE, "MechanicalUnit_6"))
+      {
+        mechanical_unit_group.mechanical_units.push_back(xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE));
+      }
+    }
+
+    result.push_back(mechanical_unit_group);
   }
 
   return result;

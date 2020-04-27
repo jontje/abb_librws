@@ -149,9 +149,18 @@ std::vector<cfg::moc::Joint> RWSInterface::getCFGJoints()
         std::stringstream ss(xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE));
         ss >> joint.logical_axis;
       }
+      else if(xmlNodeHasAttribute(attribute, Identifiers::TITLE, "kinematic_axis_number"))
+      {
+        std::stringstream ss(xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE));
+        ss >> joint.kinematic_axis_number;
+      }
       else if(xmlNodeHasAttribute(attribute, Identifiers::TITLE, "use_arm"))
       {
         joint.use_arm = xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE);
+      }
+      else if(xmlNodeHasAttribute(attribute, Identifiers::TITLE, "use_transmission"))
+      {
+        joint.use_transmission = xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE);
       }
     }
 
@@ -437,6 +446,38 @@ std::vector<cfg::moc::Single> RWSInterface::getCFGSingles()
   return result;
 }
 
+std::vector<cfg::moc::Transmission> RWSInterface::getCFGTransmission()
+{
+  std::vector<cfg::moc::Transmission> result;
+
+  RWSClient::RWSResult rws_result = rws_client_.getConfigurationInstances("MOC", "TRANSMISSION");
+
+  std::vector<Poco::XML::Node*> instances;
+  instances = xmlFindNodes(rws_result.p_xml_document, XMLAttributes::CLASS_CFG_DT_INSTANCE_LI);
+
+  for (size_t i = 0; i < instances.size(); ++i)
+  {
+    std::vector<Poco::XML::Node*> attributes = xmlFindNodes(instances[i], XMLAttributes::CLASS_CFG_IA_T_LI);
+
+    cfg::moc::Transmission transmission;
+
+    transmission.name = xmlNodeGetAttributeValue(instances[i], Identifiers::TITLE);
+
+    for (size_t j = 0; j < attributes.size(); ++j)
+    {
+      Poco::XML::Node* attribute = attributes[j];
+      if(xmlNodeHasAttribute(attribute, Identifiers::TITLE, "rotating_move"))
+      {
+        transmission.rotating_move = (xmlFindTextContent(attribute, XMLAttributes::CLASS_VALUE) == "true");
+      }
+    }
+
+    result.push_back(transmission);
+  }
+
+  return result;
+}
+
 std::vector<RWSInterface::RobotWareOptionInfo> RWSInterface::getPresentRobotWareOptions()
 {
   std::vector<RobotWareOptionInfo> result;
@@ -467,6 +508,111 @@ std::string RWSInterface::getIOSignal(const std::string& iosignal)
   if (rws_result.success)
   {
     result = xmlFindTextContent(rws_result.p_xml_document, XMLAttributes::CLASS_LVALUE);
+  }
+
+  return result;
+}
+
+bool RWSInterface::getMechanicalUnitStaticInfo(const std::string& mechunit, MechanicalUnitStaticInfo* p_static_info)
+{
+  bool result = false;
+
+  if (p_static_info)
+  {
+    RWSClient::RWSResult rws_result = rws_client_.getMechanicalUnitStaticInfo(mechunit);
+
+    if(rws_result.success)
+    {
+      p_static_info->task_name = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "task-name"));
+      p_static_info->is_integrated_unit = xmlFindTextContent(rws_result.p_xml_document,
+                                                             XMLAttribute("class", "is-integrated-unit"));
+      p_static_info->has_integrated_unit = xmlFindTextContent(rws_result.p_xml_document,
+                                                              XMLAttribute("class", "has-integrated-unit"));
+
+      std::string type = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "type"));
+      if(type == "None")
+      {
+        p_static_info->type = MechanicalUnitType::NONE;
+      }
+      else if(type == "TCPRobot")
+      {
+        p_static_info->type = MechanicalUnitType::TCP_ROBOT;
+      }
+      else if(type == "Robot")
+      {
+        p_static_info->type = MechanicalUnitType::ROBOT;
+      }
+      else if(type == "Single")
+      {
+        p_static_info->type = MechanicalUnitType::SINGLE;
+      }
+      else
+      {
+        p_static_info->type = MechanicalUnitType::UNDEFINED;
+      }
+
+      std::stringstream axes(xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "axes")));
+      axes >> p_static_info->axes;
+
+      std::stringstream axes_total(xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "axes-total")));
+      axes_total >> p_static_info->axes_total;
+
+      result = true;
+    }
+  }
+
+  return result;
+}
+
+bool RWSInterface::getMechanicalUnitDynamicInfo(const std::string& mechunit, MechanicalUnitDynamicInfo* p_dynamic_info)
+{
+  bool result = false;
+
+  if (p_dynamic_info)
+  {
+    RWSClient::RWSResult rws_result = rws_client_.getMechanicalUnitDynamicInfo(mechunit);
+
+    if(rws_result.success)
+    {
+      p_dynamic_info->tool_name = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "tool-name"));
+      p_dynamic_info->wobj_name = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "wobj-name"));
+      p_dynamic_info->payload_name = xmlFindTextContent(rws_result.p_xml_document,
+                                                        XMLAttribute("class", "payload-name"));
+      p_dynamic_info->total_payload_name = xmlFindTextContent(rws_result.p_xml_document,
+                                                              XMLAttribute("class", "total-payload-name"));
+      p_dynamic_info->status = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "status"));
+      p_dynamic_info->jog_mode = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "jog-mode"));
+
+      std::string mode = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "mode"));
+      if(mode == "Activated")
+      {
+        p_dynamic_info->mode = MechanicalUnitMode::ACTIVATED;
+      }
+      else
+      {
+        p_dynamic_info->mode = MechanicalUnitMode::DEACTIVATED;
+      }
+
+      std::string coord_system = xmlFindTextContent(rws_result.p_xml_document, XMLAttribute("class", "coord-system"));
+      if(coord_system == "Base")
+      {
+        p_dynamic_info->coord_system = RWSClient::Coordinate::BASE;
+      }
+      else if(coord_system == "Tool")
+      {
+        p_dynamic_info->coord_system = RWSClient::Coordinate::TOOL;
+      }
+      else if(coord_system == "Wobj")
+      {
+        p_dynamic_info->coord_system = RWSClient::Coordinate::WOBJ;
+      }
+      else
+      {
+        p_dynamic_info->coord_system = RWSClient::Coordinate::WORLD;
+      }
+
+      result = true;
+    }
   }
 
   return result;

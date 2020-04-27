@@ -98,9 +98,19 @@ struct Joint
   int logical_axis;
 
   /**
+   * \brief The joint's kinematic axis number.
+   */
+  int kinematic_axis_number;
+
+  /**
    * \brief The arm used by the joint.
    */
   std::string use_arm;
+
+  /**
+   * \brief The transmission used by the joint.
+   */
+  std::string use_transmission;
 };
 
 /**
@@ -184,6 +194,22 @@ struct Single
    * \brief The robot or single that moves the single's base frame.
    */
   std::string base_frame_coordinated;
+};
+
+/**
+ * \brief Representation of a 'Transmission' instance.
+ */
+struct Transmission
+{
+  /**
+   * \brief The instance's name.
+   */
+  std::string name;
+
+  /**
+   * \brief Specifies if the corresponding joint uses rotational motion (otherwise linear).
+   */
+  bool rotating_move;
 };
 } // end namespace moc
 

@@ -538,6 +538,17 @@ public:
                                   const std::string& wobj = "");
 
   /**
+   * \brief A method for retrieving the data of a RAPID symbol (in raw text format).
+   *
+   * \param task for the name of the RAPID task containing the RAPID symbol.
+   * \param module for the name of the RAPID module containing the RAPID symbol.
+   * \param name for the name of the RAPID symbol.
+   *
+   * \return std::string containing the data. Empty if not found.
+   */
+  std::string getRAPIDSymbolData(const std::string& task, const std::string& module, const std::string& name);
+
+  /**
    * \brief A method for retrieving the data of a RAPID symbol (parsed into a struct representing the RAPID data).
    *
    * \param task for the name of the RAPID task containing the RAPID symbol.
@@ -630,6 +641,21 @@ public:
   bool setRAPIDSymbolData(const std::string& task,
                           const std::string& module,
                           const std::string& name,
+                          const std::string& data);
+
+  /**
+   * \brief A method for setting the data of a RAPID symbol.
+   *
+   * \param task for the name of the RAPID task containing the RAPID symbol.
+   * \param module for the name of the RAPID module containing the RAPID symbol.
+   * \param name for the name of the RAPID symbol.
+   * \param data containing the RAPID symbol's new data.
+   *
+   * \return bool indicating if the communication was successful or not.
+   */
+  bool setRAPIDSymbolData(const std::string& task,
+                          const std::string& module,
+                          const std::string& name,
                           const RAPIDSymbolDataAbstract& data);
 
   /**
@@ -679,6 +705,17 @@ public:
    * \return bool indicating if the communication was successful or not.
    */
   bool setMotorsOff();
+
+  /**
+   * \brief A method for setting the robot controller's speed ratio.
+   *
+   * Note: The ratio must be an integer [0, 100].
+   *
+   * \param ratio specifying the new ratio.
+   *
+   * \return bool indicating if the communication was successful or not.
+   */
+  bool setSpeedRatio(unsigned int ratio);
 
   /**
    * \brief A method for retrieving a file from the robot controller.
